@@ -1,0 +1,117 @@
+image: ubuntu:16.04
+
+stages:
+  - build
+  - smoke_test
+  - test
+  - deploy
+
+linux-build:
+  script:
+    - ./configure.sh --auto
+    - cd build
+    - make -j4
+    - make install
+    - cd ..
+    - mkdir -p linux/usr/
+    - cp -r /usr/local/ linux/usr/
+  artifacts:
+    expire_in: 1 day
+    name: "${CI_BUILD_NAME}_${CI_BUILD_REF_NAME}"
+    paths:
+      - linux/
+  stage: build
+  image: butitsnotme/build-env:latest
+  tags:
+    - docker
+
+windows-build:
+  script:
+    - configure.sh --auto --windows
+    - cd build
+    - ninja
+    - ninja install
+    - cd ..
+  artifacts:
+    expire_in: 1 day
+    name: "${CI_BUILD_NAME}_${CI_BUILD_REF_NAME}"
+    paths:
+      - windows/
+  stage: build
+  tags:
+    - windows
+
+linux-smoke_test:
+  script:
+    - cp -r linux/usr/local /usr/
+    - cd /usr/local/bin/
+    - ./bg --help --version
+  stage: smoke_test
+  tags:
+    - docker
+  dependencies:
+    - linux-build
+
+windows-smoke_test:
+  script:
+    - cd windows/bin
+    - bg.exe --help --version
+  stage: smoke_test
+  tags:
+    - windows
+  dependencies:
+    - windows-build
+
+linux-unit_tests:
+  script:
+    - cp -r linux/usr/local /usr/
+    - cd /usr/local/bin/
+    - ./unit_tests -s
+  tags:
+    - docker
+  dependencies:
+    - linux-build
+
+windows-unit_tests:
+  script:
+    - cd windows/bin
+    - unit_tests.exe -s
+  tags:
+    - windows
+  dependencies:
+    - windows-build
+
+deploy_stage:
+  script:
+    - /bin/true
+  stage: deploy
+  environment: pre-release
+  artifacts:
+    paths:
+      - windows/
+      - linux/
+  only:
+    - release-*
+  tags:
+    - docker
+  dependencies:
+    - windows-build
+    - linux-build
+
+deploy_prod:
+  script:
+    - /bin/true
+  stage: deploy
+  environment: release
+  artifacts:
+    paths:
+      - windows/
+      - linux/
+  only:
+    - releases
+  tags:
+    - docker
+  dependencies:
+    - windows-build
+    - linux-build
+
