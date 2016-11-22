@@ -10,6 +10,7 @@ CLEAN="false"
 CLEAN_ALL="false"
 AUTO="false"
 GLOBAL_INSTALL="false"
+WINDOWS="false"
 
 while [[ $# > 0 ]]
 do
@@ -44,6 +45,9 @@ do
     --global-install)
       GLOBAL_INSTALL="true"
       ;;
+    --windows)
+      WINDOWS="true"
+      ;;
     *)
       # Unknown option
       ;;
@@ -63,7 +67,7 @@ else
   BRANCH="${CI_BUILD_REF_NAME##*/}"
 fi
 
-if [[ $BRANCH == release* ]] || [[ $BRANCH == "master" ]]
+if [[ $BRANCH == release* ]] || [[ $BRANCH == "releases" ]]
 then
   ON_RELEASE_BRANCH="true"
 else
@@ -84,14 +88,14 @@ then
 fi
 
 
-if [[ "true" == $CLEAN_ALL ]]
-then
-  git submodule deinit .
-fi
+#if [[ "true" == $CLEAN_ALL ]]
+#then
+#  git submodule deinit .
+#fi
 
 # Initialize submodules
-git submodule init
-git submodule update
+#git submodule init
+#git submodule update
 
 # Build cmake options string
 OPTIONS=""
@@ -125,11 +129,19 @@ then
   OPTIONS="$OPTIONS -DTESTING_ENABLED:BOOLEAN=true"
 fi
 
-if [[ "true" == $GLOBAL_INSTALL ]]
+if [[ "true" == $GLOBAL_INSTALL ]] && [[ "false" == $WINDOWS ]]
 then
   OPTIONS="$OPTIONS -DCMAKE_INSTALL_PREFIX=/usr/local"
+elif [[ "true" == $WINDOWS ]]
+then
+  OPTIONS="$OPTIONS -DCMAKE_INSTALL_PREFIX=`pwd`/windows"
 else
-  OPTIONS="$OPTIONS -DCMAKE_INSTALL_PREFIX=`pwd`/install"
+  OPTIONS="$OPTIONS -DCMAKE_INSTALL_PREFIX=`pwd`/linux"
+fi
+
+if [[ "true" == $WINDOWS ]]
+then
+  OPTIONS="$OPTIONS -G Ninja"
 fi
 
 if [[ "true" == $CLEAN ]]
@@ -146,6 +158,7 @@ cmake $OPTIONS ..
 if [[ "true" == $MAKE ]]
 then
   make 
+  make install
   if [[ "true" == $TEST ]]
   then
     make test
