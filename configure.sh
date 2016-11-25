@@ -88,14 +88,13 @@ then
 fi
 
 
-#if [[ "true" == $CLEAN_ALL ]]
-#then
-#  git submodule deinit .
-#fi
+if [[ "true" == $CLEAN_ALL ]]
+then
+  git submodule deinit -f .
+fi
 
 # Initialize submodules
-#git submodule init
-#git submodule update
+git submodule update -f --init
 
 # Build cmake options string
 OPTIONS=""
