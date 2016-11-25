@@ -14,7 +14,7 @@ DATA_FILE(program_description)
 
 int main(int argc, char** argv) {
 
-  string prog_name = "bg";
+  string prog_name = "bground";
   string description(&program_description_begin);
 
   args::ArgumentParser p(description);
