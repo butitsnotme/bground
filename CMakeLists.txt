@@ -28,6 +28,7 @@ IF("${isSystemDir}" STREQUAL "-1")
   SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 ENDIF("${isSystemDir}" STREQUAL "-1")
 
+add_subdirectory (lib/SQLiteCpp)
 add_subdirectory (src)
 add_subdirectory (test)
 

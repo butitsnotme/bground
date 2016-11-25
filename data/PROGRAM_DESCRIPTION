@@ -1,0 +1,5 @@
+This program changes the background of a Linux desktop.
+
+It takes a series of directories of images and a list of quotes, upon
+updating it places a random quote on a random image and sets the result as
+the background.
