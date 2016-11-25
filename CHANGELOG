@@ -1,0 +1,6 @@
+Version 1.0.0 (2016-11-25)
+ - First public release
+ - Settings are stored in ~/.bground
+ - Image is saved to ~/.bground.png
+ - Quotes are applied in the bottom right corner of the image
+

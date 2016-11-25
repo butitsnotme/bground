@@ -14,7 +14,7 @@ DATA_FILE(program_description)
 
 int main(int argc, char** argv) {
 
-  string prog_name = "bg";
+  string prog_name = "bground";
   string description(&program_description_begin);
 
   args::ArgumentParser p(description);
@@ -105,21 +105,20 @@ int main(int argc, char** argv) {
 
   if (update || updateFlag) {
     d.update();
+
+    cout << "Image selected: " << d.getImage() << endl;
+    cout << "Quote selected: " << d.getQuote() << endl;
+
+    Photo photo(d.getImage());
+    photo.setQuote(d.getQuote());
+    photo.createPhoto();
+
+    char *home = getenv("HOME");
+    string sHome(home);
+    string loc = sHome + "/.bground.png";
+
+    system(("/usr/bin/feh --bg-fill " + loc).c_str());
   }
-
-
-  cout << "Image selected: " << d.getImage() << endl;
-  cout << "Quote selected: " << d.getQuote() << endl;
-
-  Photo photo(d.getImage());
-  photo.setQuote(d.getQuote());
-  photo.createPhoto();
-
-  char *home = getenv("HOME");
-  string sHome(home);
-  string loc = sHome + "/.bground.png";
-
-  system(("/usr/bin/feh --bg-fill " + loc).c_str());
 
   return 0;
 
