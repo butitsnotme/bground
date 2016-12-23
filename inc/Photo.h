@@ -8,6 +8,7 @@ class Photo {
 public:
   Photo(std::string path);
   ~Photo();
+  void resize(int x, int y);
   void setQuote(std::string quote);
   void createPhoto();
 private:

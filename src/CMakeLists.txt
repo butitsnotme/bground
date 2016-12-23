@@ -7,10 +7,12 @@ list(APPEND bg_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/data.S)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 FIND_PACKAGE(ImageMagick COMPONENTS Magick++ MagickWand MagickCore REQUIRED)
+find_package(X11 REQUIRED)
 
 include_directories(
   ${bg_INCLUUDE_DIRS}
   ${ImageMagick_INCLUDE_DIRS}
+  ${X11_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}/lib/SQLiteCpp/include
   ${CMAKE_SOURCE_DIR}/lib/args/)
 
@@ -28,7 +30,7 @@ add_library (bgpart STATIC ${bg_SOURCES})
 
 add_executable (bground ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
 target_link_libraries (bground bgpart SQLiteCpp sqlite3 Threads::Threads
-  ${CMAKE_DL_LIBS} stdc++fs ${ImageMagick_LIBRARIES})
+  ${CMAKE_DL_LIBS} stdc++fs ${ImageMagick_LIBRARIES} ${X11_LIBRARIES})
 
 if (${DEVELOPMENT_BUILD} MATCHES True)
   add_definitions (-DDEVELOPMENT_BUILD)

@@ -16,6 +16,13 @@ Photo::Photo(string path) {
 Photo::~Photo() {
 }
 
+void Photo::resize(int x, int y) {
+  stringstream ss;
+  ss << x << "x" << y << "^";
+  Geometry newSize(ss.str());
+  photo.resize(newSize);
+}
+
 void Photo::setQuote(string quote) {
   int x_pos, y_pos = 0;
   int maxLength = 0;
@@ -35,8 +42,8 @@ void Photo::setQuote(string quote) {
     ++numLines;
   }
   // Calculate the position to draw at based on the above
-  x_pos = photo.columns() - (maxLength * 80); // ~71 pixels per character
-  y_pos = bottom - ((numLines * 137) / 2); // ~137 pixels per line
+  x_pos = photo.columns() - (maxLength * 42) - 10; // ~42 pixels per character
+  y_pos = bottom - ((numLines * 80) / 2); // ~80 pixels per line
 
   // Determine whether the image is generally "light" or "dark"
   Image::ImageStatistics *s =
@@ -58,7 +65,7 @@ void Photo::setQuote(string quote) {
       StyleType::NormalStyle,
       400,
       StretchType::NormalStretch));
-  to_draw.push_back(DrawablePointSize(120));
+  to_draw.push_back(DrawablePointSize(70));
   to_draw.push_back(DrawableStrokeColor(
       ( dark ? Color("black") : Color("white"))));
   to_draw.push_back(DrawableStrokeWidth(3));
