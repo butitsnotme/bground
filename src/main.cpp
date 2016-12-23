@@ -3,6 +3,7 @@
 #include <sstream>
 
 #include "Database.h"
+#include "Output.h"
 #include "Info.h"
 #include "Photo.h"
 #include "args.hxx"
@@ -19,7 +20,7 @@ int main(int argc, char** argv) {
 
   args::ArgumentParser p(description);
   args::Flag license(p, "license", "Show the license", {"license"});
-  args::Flag help(p, "help", "Display this help text", {'h', "help"});
+  args::Flag help(p, "help", "Output this help text", {'h', "help"});
   args::Flag version(p, "version", "Show the program version", {"version"});
   args::Flag badi(p, "bad image",
       "Add the currently displayed image to the blacklist so that it "
@@ -109,7 +110,11 @@ int main(int argc, char** argv) {
     cout << "Image selected: " << d.getImage() << endl;
     cout << "Quote selected: " << d.getQuote() << endl;
 
+    Output disp;
+    Output::Resolution maxres = disp.getMaxResolution();
+
     Photo photo(d.getImage());
+    photo.resize(maxres.x, maxres.y);
     photo.setQuote(d.getQuote());
     photo.createPhoto();
 
@@ -117,7 +122,9 @@ int main(int argc, char** argv) {
     string sHome(home);
     string loc = sHome + "/.bground.png";
 
-    system(("/usr/bin/feh --bg-fill " + loc).c_str());
+    do {
+      system(("/usr/bin/feh --bg-fill " + loc).c_str());
+    } while(disp.nextOutput());
   }
 
   return 0;
